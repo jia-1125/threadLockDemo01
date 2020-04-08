@@ -8,6 +8,9 @@ class ShareResource {
     private int flag = 1;
     private Lock lock = new ReentrantLock();//默认不公平锁
     private Condition condition = lock.newCondition();
+    private Condition condition1= lock.newCondition();
+    private Condition condition2= lock.newCondition();
+
     public void prin5() {
         lock.lock();
         //判断
@@ -21,7 +24,7 @@ class ShareResource {
             }
             //只通知B系统
             flag=2;
-            condition.signal();
+            condition1.signal();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -34,7 +37,7 @@ class ShareResource {
         //判断
         try {
             while (flag != 2) {
-                condition.await();
+                condition1.await();
             }
             //干活
             for (int i = 1; i <= 10; i++) {
@@ -42,7 +45,7 @@ class ShareResource {
             }
             //通知
             flag=3;
-            condition.signal();
+            condition2.signal();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -56,7 +59,7 @@ class ShareResource {
             //判断
             while (flag != 3) {
                 //干活
-               condition.await();
+               condition2.await();
             }
             for (int i = 1; i <= 15; i++) {
                 System.out.println(Thread.currentThread().getName() + "\t" + i);
